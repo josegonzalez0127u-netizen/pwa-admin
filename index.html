@@ -4,19 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Admin - Panel de Control</title>
+    <!-- Íconos para el engranaje -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
         h1, h2 { color: #2c3e50; text-align: center; }
+        .header-admin { display: flex; justify-content: space-between; align-items: center; }
+        .btn-config { background: none; border: none; font-size: 24px; color: #2c3e50; cursor: pointer; }
         input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { width: 100%; padding: 15px; background-color: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
         button:hover { background-color: #34495e; }
         .hidden { display: none; }
         .logout-btn { background-color: #e74c3c; margin-top: 20px; }
         .img-input { margin-bottom: 5px; font-size: 12px; }
+        .checkbox-container { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
+        .checkbox-container input { width: auto; }
     </style>
 </head>
 <body>
+
+    <!-- Zona de Login -->
     <div id="login-section" class="container">
         <h1>Panel Admin</h1>
         <h2>Iniciar Sesión</h2>
@@ -25,8 +33,12 @@
         <button onclick="iniciarSesion()">Entrar</button>
     </div>
 
+    <!-- Zona de Publicación -->
     <div id="admin-section" class="container hidden">
-        <h1>Crear Publicación</h1>
+        <div class="header-admin">
+            <h2 style="text-align:left;">Crear Publicación</h2>
+            <button class="btn-config" onclick="toggleConfig()"><i class="fas fa-cog"></i></button>
+        </div>
         
         <label>Sección donde se publicará:</label>
         <select id="seccion">
@@ -41,17 +53,22 @@
         <label>Título o Texto del aviso:</label>
         <textarea id="texto" rows="4" placeholder="Escribe aquí el mensaje..."></textarea>
 
+        <div class="checkbox-container">
+            <input type="checkbox" id="fijado">
+            <label for="fijado" style="margin:0;">Fijar publicación arriba (como destacada)</label>
+        </div>
+
         <label>Links de Imágenes (Opcional, hasta 10):</label>
-        <input type="text" id="imagenUrl1" class="img-input" placeholder="Link Imagen 1 (Drive)">
-        <input type="text" id="imagenUrl2" class="img-input" placeholder="Link Imagen 2 (Drive)">
-        <input type="text" id="imagenUrl3" class="img-input" placeholder="Link Imagen 3 (Drive)">
-        <input type="text" id="imagenUrl4" class="img-input" placeholder="Link Imagen 4 (Drive)">
-        <input type="text" id="imagenUrl5" class="img-input" placeholder="Link Imagen 5 (Drive)">
-        <input type="text" id="imagenUrl6" class="img-input" placeholder="Link Imagen 6 (Drive)">
-        <input type="text" id="imagenUrl7" class="img-input" placeholder="Link Imagen 7 (Drive)">
-        <input type="text" id="imagenUrl8" class="img-input" placeholder="Link Imagen 8 (Drive)">
-        <input type="text" id="imagenUrl9" class="img-input" placeholder="Link Imagen 9 (Drive)">
-        <input type="text" id="imagenUrl10" class="img-input" placeholder="Link Imagen 10 (Drive)">
+        <input type="text" id="imagenUrl1" class="img-input" placeholder="Link Imagen 1">
+        <input type="text" id="imagenUrl2" class="img-input" placeholder="Link Imagen 2">
+        <input type="text" id="imagenUrl3" class="img-input" placeholder="Link Imagen 3">
+        <input type="text" id="imagenUrl4" class="img-input" placeholder="Link Imagen 4">
+        <input type="text" id="imagenUrl5" class="img-input" placeholder="Link Imagen 5">
+        <input type="text" id="imagenUrl6" class="img-input" placeholder="Link Imagen 6">
+        <input type="text" id="imagenUrl7" class="img-input" placeholder="Link Imagen 7">
+        <input type="text" id="imagenUrl8" class="img-input" placeholder="Link Imagen 8">
+        <input type="text" id="imagenUrl9" class="img-input" placeholder="Link Imagen 9">
+        <input type="text" id="imagenUrl10" class="img-input" placeholder="Link Imagen 10">
 
         <label>Link de Video (Opcional):</label>
         <input type="text" id="videoUrl" placeholder="Pega el link de YouTube o Drive aquí">
@@ -65,6 +82,32 @@
         <hr style="margin-top:30px; border:1px solid #ccc;">
         <h2>Publicaciones Existentes</h2>
         <div id="lista-publicaciones" style="margin-top:15px;"></div>
+    </div>
+
+    <!-- Zona de Configuración -->
+    <div id="config-section" class="container hidden">
+        <div class="header-admin">
+            <h2 style="text-align:left;">Configuración de Redes</h2>
+            <button class="btn-config" onclick="toggleConfig()"><i class="fas fa-arrow-left"></i></button>
+        </div>
+        <p>Pega aquí los enlaces de tus redes sociales. Si dejas un espacio vacío, el ícono no aparecerá en la App.</p>
+        
+        <label>Link de Facebook:</label>
+        <input type="text" id="cfg-facebook" placeholder="https://facebook.com/tu-pagina">
+        
+        <label>Link de YouTube:</label>
+        <input type="text" id="cfg-youtube" placeholder="https://youtube.com/@tu-canal">
+        
+        <label>Link de TikTok:</label>
+        <input type="text" id="cfg-tiktok" placeholder="https://tiktok.com/@tu-usuario">
+        
+        <label>Link de Instagram:</label>
+        <input type="text" id="cfg-instagram" placeholder="https://instagram.com/tu-usuario">
+        
+        <label>Número de WhatsApp (Solo números, con código de país):</label>
+        <input type="text" id="cfg-whatsapp" placeholder="Ej: 521234567890">
+
+        <button onclick="guardarConfig()">Guardar Redes</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -82,8 +125,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-
-        let postsCache = []; // Para guardar y poder editar
+        let postsCache = [];
 
         function iniciarSesion() {
             const email = document.getElementById('email').value;
@@ -92,7 +134,6 @@
                 .then(() => alert("Sesión iniciada correctamente"))
                 .catch((error) => alert("Error: " + error.message));
         }
-
         function cerrarSesion() { auth.signOut(); }
 
         auth.onAuthStateChanged((user) => {
@@ -100,21 +141,30 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
                 cargarPublicacionesAdmin();
+                cargarConfigAdmin();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('admin-section').classList.add('hidden');
+                document.getElementById('config-section').classList.add('hidden');
             }
         });
 
+        // Cambiar entre vista de Publicaciones y Configuración
+        function toggleConfig() {
+            document.getElementById('admin-section').classList.toggle('hidden');
+            document.getElementById('config-section').classList.toggle('hidden');
+        }
+
+        // Lógica de Publicaciones
         function publicar() {
             const seccion = document.getElementById('seccion').value;
             const texto = document.getElementById('texto').value;
             const videoUrl = document.getElementById('videoUrl').value;
             const pdfUrl = document.getElementById('pdfUrl').value;
+            const fijado = document.getElementById('fijado').checked;
 
             if (!texto) { alert("Por favor escribe un texto."); return; }
 
-            // Recopilar hasta 10 imágenes
             let imagenes = {};
             for(let i=1; i<=10; i++){
                 let val = document.getElementById('imagenUrl'+i).value;
@@ -122,36 +172,31 @@
             }
 
             db.collection("publicaciones").add({
-                seccion: seccion,
-                texto: texto,
-                imagenes: imagenes, // Guardamos las imágenes como un objeto
-                videoUrl: videoUrl,
-                pdfUrl: pdfUrl,
+                seccion, texto, imagenes, videoUrl, pdfUrl, fijado,
                 fecha: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
+            }).then(() => {
                 alert("¡Publicación exitosa!");
                 document.getElementById('texto').value = '';
+                document.getElementById('fijado').checked = false;
                 for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
                 document.getElementById('videoUrl').value = '';
                 document.getElementById('pdfUrl').value = '';
-            })
-            .catch((error) => alert("Error al publicar: " + error.message));
+            }).catch((error) => alert("Error al publicar: " + error.message));
         }
 
         function cargarPublicacionesAdmin() {
             db.collection("publicaciones").orderBy("fecha", "desc").onSnapshot((querySnapshot) => {
                 let html = '';
-                postsCache = []; // Limpiamos cache
+                postsCache = [];
                 querySnapshot.forEach((doc) => {
                     const pub = doc.data();
                     pub.id = doc.id;
                     postsCache.push(pub);
-                    
                     let cantImgs = pub.imagenes ? Object.keys(pub.imagenes).length : 0;
+                    let esFijado = pub.fijado ? ' | 🔴 FIJADO' : '';
                     html += `
                     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px;">
-                        <p><strong>Sección:</strong> ${pub.seccion}</p>
+                        <p><strong>Sección:</strong> ${pub.seccion} ${esFijado}</p>
                         <p><strong>Texto:</strong> ${pub.texto}</p>
                         <p><em>Fotos: ${cantImgs} | Video: ${pub.videoUrl ? 'Sí' : 'No'} | PDF: ${pub.pdfUrl ? 'Sí' : 'No'}</em></p>
                         <button onclick="editarPublicacion('${doc.id}')" style="background:#f39c12; color:white; padding:5px; width:auto; margin-bottom:5px;">Editar</button>
@@ -171,21 +216,17 @@
         function editarPublicacion(id) {
             const pub = postsCache.find(p => p.id === id);
             if(!pub) return;
-
             document.getElementById('seccion').value = pub.seccion;
             document.getElementById('texto').value = pub.texto;
+            document.getElementById('fijado').checked = pub.fijado || false;
             
-            // Limpiar inputs de imágenes primero
             for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
-            
-            // Llenar imágenes si existen
             if(pub.imagenes) {
                 for(let key in pub.imagenes) {
                     let num = key.replace('imagenUrl', '');
                     document.getElementById('imagenUrl'+num).value = pub.imagenes[key];
                 }
             }
-
             document.getElementById('videoUrl').value = pub.videoUrl || '';
             document.getElementById('pdfUrl').value = pub.pdfUrl || '';
             
@@ -200,22 +241,16 @@
             const texto = document.getElementById('texto').value;
             const videoUrl = document.getElementById('videoUrl').value;
             const pdfUrl = document.getElementById('pdfUrl').value;
-
+            const fijado = document.getElementById('fijado').checked;
             let imagenes = {};
             for(let i=1; i<=10; i++){
                 let val = document.getElementById('imagenUrl'+i).value;
                 if(val) imagenes['imagenUrl'+i] = val;
             }
-
-            db.collection("publicaciones").doc(id).update({
-                seccion: seccion,
-                texto: texto,
-                imagenes: imagenes,
-                videoUrl: videoUrl,
-                pdfUrl: pdfUrl
-            }).then(() => {
+            db.collection("publicaciones").doc(id).update({ seccion, texto, imagenes, videoUrl, pdfUrl, fijado }).then(() => {
                 alert("Cambios guardados.");
                 document.getElementById('texto').value = '';
+                document.getElementById('fijado').checked = false;
                 for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
                 document.getElementById('videoUrl').value = '';
                 document.getElementById('pdfUrl').value = '';
@@ -223,6 +258,33 @@
                 btn.innerText = "Publicar";
                 btn.setAttribute('onclick', 'publicar()');
             });
+        }
+
+        // Lógica de Configuración de Redes
+        function cargarConfigAdmin() {
+            db.collection("configuracion").doc("redes").onSnapshot((doc) => {
+                if(doc.exists) {
+                    const c = doc.data();
+                    document.getElementById('cfg-facebook').value = c.facebook || '';
+                    document.getElementById('cfg-youtube').value = c.youtube || '';
+                    document.getElementById('cfg-tiktok').value = c.tiktok || '';
+                    document.getElementById('cfg-instagram').value = c.instagram || '';
+                    document.getElementById('cfg-whatsapp').value = c.whatsapp || '';
+                }
+            });
+        }
+
+        function guardarConfig() {
+            const config = {
+                facebook: document.getElementById('cfg-facebook').value,
+                youtube: document.getElementById('cfg-youtube').value,
+                tiktok: document.getElementById('cfg-tiktok').value,
+                instagram: document.getElementById('cfg-instagram').value,
+                whatsapp: document.getElementById('cfg-whatsapp').value
+            };
+            db.collection("configuracion").doc("redes").set(config).then(() => {
+                alert("Redes sociales guardadas correctamente.");
+            }).catch(err => alert("Error: " + err));
         }
     </script>
 </body>

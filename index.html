@@ -5,57 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Admin - Panel de Control</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #2c3e50;
-            text-align: center;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #34495e;
-        }
-        .hidden {
-            display: none;
-        }
-        .logout-btn {
-            background-color: #e74c3c;
-            margin-top: 20px;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background-color: #2c3e50; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #34495e; }
+        .hidden { display: none; }
+        .logout-btn { background-color: #e74c3c; margin-top: 20px; }
+        .img-input { margin-bottom: 5px; font-size: 12px; }
     </style>
 </head>
 <body>
-
-    <!-- Zona de Login (Solo correo y contraseña) -->
     <div id="login-section" class="container">
         <h1>Panel Admin</h1>
         <h2>Iniciar Sesión</h2>
@@ -64,7 +25,6 @@
         <button onclick="iniciarSesion()">Entrar</button>
     </div>
 
-    <!-- Zona de Publicación (Oculta hasta iniciar sesión) -->
     <div id="admin-section" class="container hidden">
         <h1>Crear Publicación</h1>
         
@@ -78,11 +38,20 @@
             <option value="valores">VALORES</option>
         </select>
 
-        <label>Texto del aviso:</label>
-        <textarea id="texto" rows="4" placeholder="Escribe aquí el mensaje o aviso..."></textarea>
+        <label>Título o Texto del aviso:</label>
+        <textarea id="texto" rows="4" placeholder="Escribe aquí el mensaje..."></textarea>
 
-        <label>Link de Imagen (Opcional):</label>
-        <input type="text" id="imagenUrl" placeholder="Pega el link de Google Drive aquí">
+        <label>Links de Imágenes (Opcional, hasta 10):</label>
+        <input type="text" id="imagenUrl1" class="img-input" placeholder="Link Imagen 1 (Drive)">
+        <input type="text" id="imagenUrl2" class="img-input" placeholder="Link Imagen 2 (Drive)">
+        <input type="text" id="imagenUrl3" class="img-input" placeholder="Link Imagen 3 (Drive)">
+        <input type="text" id="imagenUrl4" class="img-input" placeholder="Link Imagen 4 (Drive)">
+        <input type="text" id="imagenUrl5" class="img-input" placeholder="Link Imagen 5 (Drive)">
+        <input type="text" id="imagenUrl6" class="img-input" placeholder="Link Imagen 6 (Drive)">
+        <input type="text" id="imagenUrl7" class="img-input" placeholder="Link Imagen 7 (Drive)">
+        <input type="text" id="imagenUrl8" class="img-input" placeholder="Link Imagen 8 (Drive)">
+        <input type="text" id="imagenUrl9" class="img-input" placeholder="Link Imagen 9 (Drive)">
+        <input type="text" id="imagenUrl10" class="img-input" placeholder="Link Imagen 10 (Drive)">
 
         <label>Link de Video (Opcional):</label>
         <input type="text" id="videoUrl" placeholder="Pega el link de YouTube o Drive aquí">
@@ -96,16 +65,12 @@
         <hr style="margin-top:30px; border:1px solid #ccc;">
         <h2>Publicaciones Existentes</h2>
         <div id="lista-publicaciones" style="margin-top:15px;"></div>
-
     </div>
 
-    <!-- SDK de Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <script>
-        // Configuración de Firebase (Tus llaves)
         const firebaseConfig = {
             apiKey: "AIzaSyBC1z1-LWxPMExp2SmxZhIQFpL2cYjz9KM",
             authDomain: "pwa-escolar-7a9d2.firebaseapp.com",
@@ -114,88 +79,82 @@
             messagingSenderId: "444090664948",
             appId: "1:444090664948:web:521b7ead26b987c2a79ba1"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Función para iniciar sesión
+        let postsCache = []; // Para guardar y poder editar
+
         function iniciarSesion() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
             auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    alert("Sesión iniciada correctamente");
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
+                .then(() => alert("Sesión iniciada correctamente"))
+                .catch((error) => alert("Error: " + error.message));
         }
 
-        // Función para cerrar sesión
-        function cerrarSesion() {
-            auth.signOut();
-        }
+        function cerrarSesion() { auth.signOut(); }
 
-        // Observador de estado de sesión
         auth.onAuthStateChanged((user) => {
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('admin-section').classList.remove('hidden');
-                cargarPublicacionesAdmin(); // <- Agrega esta línea
+                cargarPublicacionesAdmin();
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('admin-section').classList.add('hidden');
             }
         });
 
-        // Función para publicar en Firebase
         function publicar() {
             const seccion = document.getElementById('seccion').value;
             const texto = document.getElementById('texto').value;
-            const imagenUrl = document.getElementById('imagenUrl').value;
             const videoUrl = document.getElementById('videoUrl').value;
             const pdfUrl = document.getElementById('pdfUrl').value;
 
-            if (!texto) {
-                alert("Por favor escribe un texto para la publicación.");
-                return;
+            if (!texto) { alert("Por favor escribe un texto."); return; }
+
+            // Recopilar hasta 10 imágenes
+            let imagenes = {};
+            for(let i=1; i<=10; i++){
+                let val = document.getElementById('imagenUrl'+i).value;
+                if(val) imagenes['imagenUrl'+i] = val;
             }
 
-        // Guardar en Firebase
             db.collection("publicaciones").add({
                 seccion: seccion,
                 texto: texto,
-                imagenUrl: imagenUrl,
+                imagenes: imagenes, // Guardamos las imágenes como un objeto
                 videoUrl: videoUrl,
                 pdfUrl: pdfUrl,
                 fecha: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
                 alert("¡Publicación exitosa!");
-                // Limpiar campos
                 document.getElementById('texto').value = '';
-                document.getElementById('imagenUrl').value = '';
+                for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
                 document.getElementById('videoUrl').value = '';
                 document.getElementById('pdfUrl').value = '';
             })
-            .catch((error) => {
-                alert("Error al publicar: " + error.message);
-            });
+            .catch((error) => alert("Error al publicar: " + error.message));
         }
 
-        // Función para cargar y mostrar las publicaciones existentes
         function cargarPublicacionesAdmin() {
             db.collection("publicaciones").orderBy("fecha", "desc").onSnapshot((querySnapshot) => {
                 let html = '';
+                postsCache = []; // Limpiamos cache
                 querySnapshot.forEach((doc) => {
                     const pub = doc.data();
+                    pub.id = doc.id;
+                    postsCache.push(pub);
+                    
+                    let cantImgs = pub.imagenes ? Object.keys(pub.imagenes).length : 0;
                     html += `
                     <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px;">
                         <p><strong>Sección:</strong> ${pub.seccion}</p>
                         <p><strong>Texto:</strong> ${pub.texto}</p>
-                        <button onclick="editarPublicacion('${doc.id}', '${pub.seccion}', '${pub.texto.replace(/'/g, "")}', '${pub.imagenUrl || ''}', '${pub.videoUrl || ''}', '${pub.pdfUrl || ''}')" style="background:#f39c12; color:white; padding:5px; width:auto; margin-bottom:5px;">Editar</button>
+                        <p><em>Fotos: ${cantImgs} | Video: ${pub.videoUrl ? 'Sí' : 'No'} | PDF: ${pub.pdfUrl ? 'Sí' : 'No'}</em></p>
+                        <button onclick="editarPublicacion('${doc.id}')" style="background:#f39c12; color:white; padding:5px; width:auto; margin-bottom:5px;">Editar</button>
                         <button onclick="borrarPublicacion('${doc.id}')" style="background:#c0392b; color:white; padding:5px; width:auto;">Eliminar</button>
                     </div>`;
                 });
@@ -203,54 +162,68 @@
             });
         }
 
-        // Función para borrar
         function borrarPublicacion(id) {
             if(confirm("¿Seguro que deseas eliminar esta publicación?")) {
-                db.collection("publicaciones").doc(id).delete().then(() => {
-                    alert("Publicación eliminada.");
-                });
+                db.collection("publicaciones").doc(id).delete().then(() => alert("Publicación eliminada."));
             }
         }
 
-        // Función para editar (Carga los datos en el formulario de arriba)
-        function editarPublicacion(id, seccion, texto, imagen, video, pdf) {
-            document.getElementById('seccion').value = seccion;
-            document.getElementById('texto').value = texto;
-            document.getElementById('imagenUrl').value = imagen;
-            document.getElementById('videoUrl').value = video;
-            document.getElementById('pdfUrl').value = pdf;
+        function editarPublicacion(id) {
+            const pub = postsCache.find(p => p.id === id);
+            if(!pub) return;
+
+            document.getElementById('seccion').value = pub.seccion;
+            document.getElementById('texto').value = pub.texto;
             
-            // Cambiar el botón de publicar por el de guardar cambios
+            // Limpiar inputs de imágenes primero
+            for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
+            
+            // Llenar imágenes si existen
+            if(pub.imagenes) {
+                for(let key in pub.imagenes) {
+                    let num = key.replace('imagenUrl', '');
+                    document.getElementById('imagenUrl'+num).value = pub.imagenes[key];
+                }
+            }
+
+            document.getElementById('videoUrl').value = pub.videoUrl || '';
+            document.getElementById('pdfUrl').value = pub.pdfUrl || '';
+            
             let btn = document.querySelector('button[onclick="publicar()"]');
             btn.innerText = "Guardar Cambios";
             btn.setAttribute('onclick', `guardarCambios('${id}')`);
-            
-            // Subir la pantalla hacia arriba para ver el formulario
             window.scrollTo(0, 0);
         }
 
-        // Función para guardar los cambios
         function guardarCambios(id) {
+            const seccion = document.getElementById('seccion').value;
+            const texto = document.getElementById('texto').value;
+            const videoUrl = document.getElementById('videoUrl').value;
+            const pdfUrl = document.getElementById('pdfUrl').value;
+
+            let imagenes = {};
+            for(let i=1; i<=10; i++){
+                let val = document.getElementById('imagenUrl'+i).value;
+                if(val) imagenes['imagenUrl'+i] = val;
+            }
+
             db.collection("publicaciones").doc(id).update({
-                seccion: document.getElementById('seccion').value,
-                texto: document.getElementById('texto').value,
-                imagenUrl: document.getElementById('imagenUrl').value,
-                videoUrl: document.getElementById('videoUrl').value,
-                pdfUrl: document.getElementById('pdfUrl').value
+                seccion: seccion,
+                texto: texto,
+                imagenes: imagenes,
+                videoUrl: videoUrl,
+                pdfUrl: pdfUrl
             }).then(() => {
                 alert("Cambios guardados.");
-                // Limpiar formulario
                 document.getElementById('texto').value = '';
-                document.getElementById('imagenUrl').value = '';
+                for(let i=1; i<=10; i++) document.getElementById('imagenUrl'+i).value = '';
                 document.getElementById('videoUrl').value = '';
                 document.getElementById('pdfUrl').value = '';
-                // Restaurar botón
                 let btn = document.querySelector('button[onclick^="guardarCambios"]');
                 btn.innerText = "Publicar";
                 btn.setAttribute('onclick', 'publicar()');
             });
         }
-
     </script>
 </body>
 </html>
